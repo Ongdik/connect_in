@@ -5,7 +5,7 @@ import ProductList from "@/components/ProductList";
 
 const HomePage = () => {
   return (
-    <div className="max-w-screen-md mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8">
       <LocationSelector />
       <SearchBar />
       <PopularCategories />
