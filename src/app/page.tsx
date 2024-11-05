@@ -1,6 +1,7 @@
 import LocationSelector from "@/components/LocationSelector";
 import SearchBar from "@/components/SearchBar";
 import PopularCategories from "@/components/PopularCategories";
+import ProductList from "@/components/ProductList";
 
 const HomePage = () => {
   return (
@@ -8,6 +9,7 @@ const HomePage = () => {
       <LocationSelector />
       <SearchBar />
       <PopularCategories />
+      <ProductList />
     </div>
   );
 };
