@@ -4,9 +4,9 @@ import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const { orderId } = searchParams;
+  const { orderId } = await searchParams;
 
   const secretKey = process.env.TOSS_SECRET_KEY || "";
   const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
