@@ -5,10 +5,14 @@ export default async function Page({
 }: {
   searchParams: SearchParams;
 }) {
+  // searchParams를 즉시 사용할 수 있도록 await 처리
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+  const { orderId } = resolvedSearchParams;
+
   const secretKey = process.env.TOSS_SECRET_KEY || "";
   const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
 
-  const url = `https://api.tosspayments.com/v1/payments/orders/${searchParams.orderId}`;
+  const url = `https://api.tosspayments.com/v1/payments/orders/${orderId}`;
   const payments: PaymentResponse = await fetch(url, {
     headers: {
       Authorization: `Basic ${basicToken}`,
