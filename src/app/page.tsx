@@ -6,23 +6,23 @@ import PopularCategories from "@/components/PopularCategories";
 import ProductList from "@/components/ProductList";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
-const HomePage = () => {
+export default function Page() {
   const handleClick = async () => {
     const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 
     if (!clientKey) {
-      console.error("Toss client key is not defined");
+      console.error("Client key is missing");
       return;
     }
 
     const tossPayments = await loadTossPayments(clientKey);
 
     await tossPayments.requestPayment("카드", {
-      amount: 1,
+      amount: 5000,
       orderId: Math.random().toString(36).slice(2),
       orderName: "치킨",
-      successUrl: `${window.location.origin}/api/payment`,
-      failUrl: `${window.location.origin}/api/payment/fail`,
+      successUrl: `${window.location.origin}/api/payments`,
+      failUrl: `${window.location.origin}/api/payments/fail`,
     });
   };
 
@@ -32,9 +32,7 @@ const HomePage = () => {
       <SearchBar />
       <PopularCategories />
       <ProductList />
-      <button onClick={handleClick}>테스트 1원</button>
+      <button onClick={handleClick}>치킨 5000원</button>
     </div>
   );
-};
-
-export default HomePage;
+}
