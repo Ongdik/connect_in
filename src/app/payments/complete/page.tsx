@@ -1,10 +1,11 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 
-interface PageProps {
+// SearchParams 인터페이스를 사용하여 searchParams를 직접 받음
+export default async function Page({
+  searchParams,
+}: {
   searchParams: SearchParams;
-}
-
-export default async function Page({ searchParams }: PageProps) {
+}) {
   const { orderId } = searchParams;
 
   const secretKey = process.env.TOSS_SECRET_KEY || "";
