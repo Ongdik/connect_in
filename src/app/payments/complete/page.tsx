@@ -1,13 +1,11 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 
-export default async function Page({
-  searchParams,
-}: {
+interface PageProps {
   searchParams: SearchParams;
-}) {
-  // searchParams를 즉시 사용할 수 있도록 await 처리
-  const resolvedSearchParams = await Promise.resolve(searchParams);
-  const { orderId } = resolvedSearchParams;
+}
+
+export default async function Page({ searchParams }: PageProps) {
+  const { orderId } = searchParams;
 
   const secretKey = process.env.TOSS_SECRET_KEY || "";
   const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
