@@ -19,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (isRepresentative: boolean) => {
     const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 
     if (!clientKey) {
@@ -29,13 +29,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     const tossPayments = await loadTossPayments(clientKey);
 
-    await tossPayments.requestPayment("카드", {
-      amount: product.price / participants, // 인원 수에 따라 금액 나누기
-      orderId: `${product.id}_${Date.now()}`,
-      orderName: product.title,
-      successUrl: `${window.location.origin}/api/payments`,
-      failUrl: `${window.location.origin}/api/payments/fail`,
-    });
+    if (isRepresentative) {
+      // 대표 구매자 결제
+      await tossPayments.requestPayment("카드", {
+        amount: product.price, // 전체 금액
+        orderId: `${product.id}_${Date.now()}`,
+        orderName: product.title,
+        successUrl: `${window.location.origin}/api/payments`,
+        failUrl: `${window.location.origin}/api/payments/fail`,
+      });
+    } else {
+      // 분할 결제 구매자 결제
+      const amountToPay = product.price / (maxParticipants - 1); // 나누어진 금액
+      await tossPayments.requestPayment("카드", {
+        amount: amountToPay,
+        orderId: `${product.id}_${Date.now()}`,
+        orderName: product.title,
+        successUrl: `${window.location.origin}/api/payments`,
+        failUrl: `${window.location.origin}/api/payments/fail`,
+      });
+    }
   };
 
   return (
@@ -68,15 +81,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           참여하기
         </button>
       </div>
-      <button
-        onClick={participants === maxParticipants ? handlePayment : undefined}
-        className={`mt-2 w-full ${
-          participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
-        } text-white px-4 py-2 rounded-lg`}
-        disabled={participants < maxParticipants}
-      >
-        {participants < maxParticipants ? "모집 중..." : "결제하기"}
-      </button>
+      <div className="mt-4">
+        {participants >= 2 && (
+          <button
+            onClick={() => handlePayment(true)} // 대표자 결제
+            className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            대표자로 결제하기
+          </button>
+        )}
+        {participants >= 3 && (
+          <button
+            onClick={() => handlePayment(false)} // 참여자 결제
+            className="mt-2 w-full bg-green-500 text-white px-4 py-2 rounded-lg"
+          >
+            참여자로 결제하기
+          </button>
+        )}
+      </div>
     </div>
   );
 };
