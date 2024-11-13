@@ -71,7 +71,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <div className="mt-2">
         <p>
-          현재 참여 인원: {participants} / {maxParticipants}
+          참여 인원: {participants} / {maxParticipants}
         </p>
         <button
           onClick={handleJoin}
@@ -85,17 +85,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {participants >= 2 && (
           <button
             onClick={() => handlePayment(true)} // 대표자 결제
-            className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-lg whitespace-nowrap overflow-hidden truncate"
           >
-            대표자로 결제하기
+            대표자 결제
           </button>
         )}
         {participants >= 3 && (
           <button
             onClick={() => handlePayment(false)} // 참여자 결제
-            className="mt-2 w-full bg-green-500 text-white px-4 py-2 rounded-lg"
+            className="mt-2 w-full bg-green-500 text-white px-4 py-2 rounded-lg whitespace-nowrap overflow-hidden truncate"
           >
-            참여자로 결제하기
+            참여자 결제
           </button>
         )}
       </div>
