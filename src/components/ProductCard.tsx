@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       });
     } else {
       // 분할 결제 구매자 결제
-      const amountToPay = product.price / (maxParticipants - 1); // 나누어진 금액
+      const amountToPay = product.price / maxParticipants; // 나누어진 금액
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
         orderId: `${product.id}_${Date.now()}`,
@@ -82,22 +82,32 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </button>
       </div>
       <div className="mt-4">
-        {participants >= 2 && (
-          <button
-            onClick={() => handlePayment(true)} // 대표자 결제
-            className="mt-2 w-full bg-blue-500 text-white px-4 py-2 rounded-lg whitespace-nowrap overflow-hidden truncate"
-          >
-            대표자 결제
-          </button>
-        )}
-        {participants >= 3 && (
-          <button
-            onClick={() => handlePayment(false)} // 참여자 결제
-            className="mt-2 w-full bg-green-500 text-white px-4 py-2 rounded-lg whitespace-nowrap overflow-hidden truncate"
-          >
-            참여자 결제
-          </button>
-        )}
+        <button
+          onClick={
+            participants === maxParticipants
+              ? () => handlePayment(true)
+              : undefined
+          } // 대표자 결제
+          className={`mt-2 w-full ${
+            participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
+          } text-white px-4 py-2 rounded-lg`}
+          disabled={participants < maxParticipants}
+        >
+          {participants < maxParticipants ? "모집 중..." : "대표자 결제"}
+        </button>
+        <button
+          onClick={
+            participants === maxParticipants
+              ? () => handlePayment(false)
+              : undefined
+          } // 참여자 결제
+          className={`mt-2 w-full ${
+            participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
+          } text-white px-4 py-2 rounded-lg`}
+          disabled={participants < maxParticipants}
+        >
+          {participants < maxParticipants ? "모집 중..." : "참여자 결제"}
+        </button>
       </div>
     </div>
   );
