@@ -19,7 +19,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const handlePayment = async (isRepresentative: boolean) => {
+  const handlePayment = async () => {
     const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 
     if (!clientKey) {
@@ -28,19 +28,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
 
     const tossPayments = await loadTossPayments(clientKey);
+    const amountToPay = product.price / maxParticipants; // 나누어진 금액
 
-    if (isRepresentative) {
-      // 대표 구매자 결제
-      await tossPayments.requestPayment("카드", {
-        amount: product.price, // 전체 금액
-        orderId: `${product.id}_${Date.now()}`,
-        orderName: product.title,
-        successUrl: `${window.location.origin}/api/payments`,
-        failUrl: `${window.location.origin}/api/payments/fail`,
-      });
-    } else {
-      // 분할 결제 구매자 결제
-      const amountToPay = product.price / maxParticipants; // 나누어진 금액
+    try {
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
         orderId: `${product.id}_${Date.now()}`,
@@ -48,6 +38,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         successUrl: `${window.location.origin}/api/payments`,
         failUrl: `${window.location.origin}/api/payments/fail`,
       });
+    } catch (error) {
+      console.error("Payment error:", error);
     }
   };
 
@@ -83,30 +75,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <div className="mt-4">
         <button
-          onClick={
-            participants === maxParticipants
-              ? () => handlePayment(true)
-              : undefined
-          } // 대표자 결제
+          onClick={participants === maxParticipants ? handlePayment : undefined} // 참여자 결제
           className={`mt-2 w-full ${
             participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
           } text-white px-4 py-2 rounded-lg`}
           disabled={participants < maxParticipants}
         >
-          {participants < maxParticipants ? "모집 중..." : "대표자 결제"}
-        </button>
-        <button
-          onClick={
-            participants === maxParticipants
-              ? () => handlePayment(false)
-              : undefined
-          } // 참여자 결제
-          className={`mt-2 w-full ${
-            participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
-          } text-white px-4 py-2 rounded-lg`}
-          disabled={participants < maxParticipants}
-        >
-          {participants < maxParticipants ? "모집 중..." : "참여자 결제"}
+          {participants < maxParticipants ? "모집 중..." : "결제하기"}
         </button>
       </div>
     </div>
