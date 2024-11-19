@@ -85,19 +85,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         <button
           onClick={
             participants === maxParticipants
-              ? () => handlePayment(true)
-              : undefined
-          } // 대표자 결제
-          className={`mt-2 w-full ${
-            participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
-          } text-white px-4 py-2 rounded-lg`}
-          disabled={participants < maxParticipants}
-        >
-          {participants < maxParticipants ? "모집 중..." : "대표자 결제"}
-        </button>
-        <button
-          onClick={
-            participants === maxParticipants
               ? () => handlePayment(false)
               : undefined
           } // 참여자 결제
@@ -106,7 +93,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           } text-white px-4 py-2 rounded-lg`}
           disabled={participants < maxParticipants}
         >
-          {participants < maxParticipants ? "모집 중..." : "참여자 결제"}
+          {participants < maxParticipants ? "모집 중..." : "결제하기"}
         </button>
       </div>
     </div>
