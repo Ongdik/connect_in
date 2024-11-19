@@ -5,7 +5,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { orderId, paymentKey, amount } = req.query as Partial<PaymentRequest>;
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  const { orderId, paymentKey, amount } = req.body as PaymentRequest;
   const secretKey = process.env.TOSS_SECRET_KEY || "";
 
   if (!orderId || !paymentKey || !amount) {
@@ -16,7 +21,7 @@ export default async function handler(
   const url = "https://api.tosspayments.com/v1/payments/confirm";
   const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
 
-  await fetch(url, {
+  const response = await fetch(url, {
     method: "POST",
     body: JSON.stringify({
       amount,
@@ -27,7 +32,13 @@ export default async function handler(
       Authorization: `Basic ${basicToken}`,
       "Content-Type": "application/json",
     },
-  }).then((response) => response.json());
+  });
+
+  if (!response.ok) {
+    const errorResponse = await response.json();
+    res.status(response.status).json(errorResponse);
+    return;
+  }
 
   res.redirect(`/payments/complete?orderId=${orderId}`);
 }
