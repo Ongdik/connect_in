@@ -29,14 +29,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     const tossPayments = await loadTossPayments(clientKey);
     const amountToPay = product.price / maxParticipants; // 나누어진 금액
+    const orderId = `${product.id}_${Date.now()}`;
 
     try {
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
-        orderId: `${product.id}_${Date.now()}`,
+        orderId,
         orderName: product.title,
         successUrl: `${window.location.origin}/api/payments`,
         failUrl: `${window.location.origin}/api/payments/fail`,
+      });
+
+      // 결제 정보를 Spring Boot 백엔드로 전송
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; // 환경 변수에서 URL 가져오기
+
+      await fetch(`${backendUrl}/api/payments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          paymentKey: "", // Toss에서 받은 paymentKey를 여기서 설정
+          amount: amountToPay,
+        }),
       });
     } catch (error) {
       console.error("Payment error:", error);
