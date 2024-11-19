@@ -11,7 +11,9 @@ export default async function Page({
   const secretKey = process.env.TOSS_SECRET_KEY || "";
   const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
 
-  const url = `https://api.tosspayments.com/v1/payments/orders/${orderId}`;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; // 환경 변수에서 URL 가져오기
+  const url = `${backendUrl}/api/payments/${orderId}`; // 백엔드 API 호출
+
   const payments: PaymentResponse = await fetch(url, {
     headers: {
       Authorization: `Basic ${basicToken}`,
