@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/ProductType";
+import { TossError } from "@/types/TossError";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 type ProductCardProps = {
@@ -40,7 +41,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         failUrl: `${window.location.origin}/payments/fail`,
       });
     } catch (error) {
-      console.error("Payment error:", error);
+      // 에러를 토스 에러로 선언
+      const tossError = error as TossError;
+
+      if (tossError.code === "USER_CANCEL") {
+      } else {
+        console.error("Payment error:", tossError);
+      }
     }
   };
 
