@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/ProductType";
-import { TossError } from "@/types/TossError";
+import { TossError } from "@/types/TossErrorType";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 type ProductCardProps = {
