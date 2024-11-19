@@ -7,9 +7,25 @@ export default async function Page({
 }) {
   const { orderId, amount } = await searchParams;
 
+  // 디버깅: searchParams에 포함된 값 확인
+  console.log("SearchParams:", { orderId, amount });
+
+  // 디버깅용 UI
+  if (!orderId || !amount) {
+    return (
+      <div>
+        <h1>SearchParams가 누락되었습니다.</h1>
+        <pre>{JSON.stringify(await searchParams, null, 2)}</pre>
+      </div>
+    );
+  }
+
   if (!orderId || !amount) {
     return <div>잘못된 요청입니다.</div>;
   }
+
+  // 디버깅용
+  console.log("백엔드로 전달될 데이터:", { orderId, amount });
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; // 환경 변수에서 URL 가져오기
   const response = await fetch(`${backendUrl}/payments/confirm`, {
@@ -24,10 +40,18 @@ export default async function Page({
     return <div>결제 검증에 실패했습니다.</div>;
   }
 
+  console.log("POST 직후:", response);
+
   const paymentsResponse: PaymentResponse = await response.json();
+  console.log("전체 결제 응답 데이터:", paymentsResponse);
 
   // `result` 객체 추출 및 디버깅
   const payments = paymentsResponse.result;
+  console.log("결제 결과 데이터 (result):", payments);
+
+  // // `card` 정보 추출 및 디버깅
+  // const { card } = payments;
+  // console.log("카드 정보:", card);
 
   return (
     <div>
