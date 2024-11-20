@@ -25,5 +25,5 @@ export interface PaymentResponse {
 export interface SearchParams {
   orderId: string;
   amount: number;
-  //paymentKey: string;
+  paymentKey: string;
 }
