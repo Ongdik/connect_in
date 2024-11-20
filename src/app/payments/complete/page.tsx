@@ -1,37 +1,73 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 
-// SearchParams 인터페이스를 사용하여 searchParams를 직접 받음
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { orderId } = await searchParams;
+  const { orderId, amount } = await searchParams;
 
-  const secretKey = process.env.TOSS_SECRET_KEY || "";
-  const basicToken = Buffer.from(`${secretKey}:`, "utf-8").toString("base64");
+  // 디버깅: searchParams에 포함된 값 확인
+  console.log("SearchParams:", { orderId, amount });
 
-  const url = `https://api.tosspayments.com/v1/payments/orders/${orderId}`;
-  const payments: PaymentResponse = await fetch(url, {
+  // 디버깅용 UI
+  if (!orderId || !amount) {
+    return (
+      <div>
+        <h1>SearchParams가 누락되었습니다.</h1>
+        <pre>{JSON.stringify(await searchParams, null, 2)}</pre>
+      </div>
+    );
+  }
+
+  if (!orderId || !amount) {
+    return <div>잘못된 요청입니다.</div>;
+  }
+
+  // 디버깅용
+  console.log("백엔드로 전달될 데이터:", { orderId, amount });
+
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; // 환경 변수에서 URL 가져오기
+  const response = await fetch(`${backendUrl}/payments/confirm`, {
+    method: "POST",
     headers: {
-      Authorization: `Basic ${basicToken}`,
       "Content-Type": "application/json",
     },
-  }).then((res) => res.json());
+    body: JSON.stringify({ orderId, amount }),
+  });
 
-  const { card } = payments;
+  if (!response.ok) {
+    return <div>결제 검증에 실패했습니다.</div>;
+  }
+
+  console.log("POST 직후:", response);
+
+  const paymentsResponse: PaymentResponse = await response.json();
+  console.log("전체 결제 응답 데이터:", paymentsResponse);
+
+  // `result` 객체 추출 및 디버깅
+  const payments = paymentsResponse.result;
+  console.log("결제 결과 데이터 (result):", payments);
+
+  // // `card` 정보 추출 및 디버깅
+  // const { card } = payments;
+  // console.log("카드 정보:", card);
+
   return (
     <div>
       <h1>결제가 완료되었습니다</h1>
       <ul>
         <li>결제 상품: {payments.orderName}</li>
         <li>주문번호: {payments.orderId}</li>
-        <li>카드회사: {card?.company || "-"}</li>
+        <li>결제금액: {payments.amount || ""}</li>
+        {/* <li>카드회사: {card?.company || "-"}</li>
         <li>카드번호: {card?.number || ""}</li>
-        <li>결제금액: {card?.amount || ""}</li>
+        <li>결제금액: {card?.amount || ""}</li> */}
         <li>
           결제승인날짜:{" "}
-          {Intl.DateTimeFormat().format(new Date(payments.approvedAt))}
+          {payments.approvedAt
+            ? Intl.DateTimeFormat().format(new Date(payments.approvedAt))
+            : "날짜 정보 없음"}
         </li>
       </ul>
     </div>

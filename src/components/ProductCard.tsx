@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/ProductType";
+import { TossError } from "@/types/TossErrorType";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
 
 type ProductCardProps = {
@@ -29,17 +30,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     const tossPayments = await loadTossPayments(clientKey);
     const amountToPay = product.price / maxParticipants; // 나누어진 금액
+    const orderId = `${product.id}_${Date.now()}`;
 
     try {
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
-        orderId: `${product.id}_${Date.now()}`,
+        orderId,
         orderName: product.title,
-        successUrl: `${window.location.origin}/api/payments`,
-        failUrl: `${window.location.origin}/api/payments/fail`,
+        successUrl: `${window.location.origin}/payments/complete`,
+        failUrl: `${window.location.origin}/payments/fail`,
       });
     } catch (error) {
-      console.error("Payment error:", error);
+      // 에러를 토스 에러로 선언
+      const tossError = error as TossError;
+
+      if (tossError.code === "USER_CANCEL") {
+      } else {
+        console.error("Payment error:", tossError);
+      }
     }
   };
 
