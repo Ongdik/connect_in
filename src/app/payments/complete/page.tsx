@@ -5,13 +5,15 @@ export default async function Page({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const { orderId, amount } = await searchParams;
+  const { orderId, paymentKey, amount: amountStr } = await searchParams;
+
+  const amount = Number(amountStr);
 
   // 디버깅: searchParams에 포함된 값 확인
-  console.log("SearchParams:", { orderId, amount });
+  console.log("SearchParams:", { orderId, paymentKey, amount });
 
   // 디버깅용 UI
-  if (!orderId || !amount) {
+  if (!orderId || !paymentKey || !amount) {
     return (
       <div>
         <h1>SearchParams가 누락되었습니다.</h1>
@@ -20,12 +22,12 @@ export default async function Page({
     );
   }
 
-  if (!orderId || !amount) {
+  if (!orderId || !paymentKey || !amount) {
     return <div>잘못된 요청입니다.</div>;
   }
 
   // 디버깅용
-  console.log("백엔드로 전달될 데이터:", { orderId, amount });
+  console.log("백엔드로 전달될 데이터:", { orderId, paymentKey, amount });
 
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; // 환경 변수에서 URL 가져오기
   const response = await fetch(`${backendUrl}/payments/confirm`, {
@@ -33,7 +35,7 @@ export default async function Page({
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ orderId, amount }),
+    body: JSON.stringify({ orderId, paymentKey, amount }),
   });
 
   if (!response.ok) {
