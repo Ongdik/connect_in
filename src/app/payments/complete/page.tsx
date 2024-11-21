@@ -61,15 +61,13 @@ export default async function Page({
       <ul>
         <li>결제 상품: {payments.orderName}</li>
         <li>주문번호: {payments.orderId}</li>
-        <li>결제금액: {payments.amount || ""}</li>
+        <li>결제금액: {payments.totalAmount || ""}</li>
         {/* <li>카드회사: {card?.company || "-"}</li>
         <li>카드번호: {card?.number || ""}</li>
         <li>결제금액: {card?.amount || ""}</li> */}
         <li>
           결제승인날짜:{" "}
-          {payments.approvedAt
-            ? Intl.DateTimeFormat().format(new Date(payments.approvedAt))
-            : "날짜 정보 없음"}
+          {Intl.DateTimeFormat().format(new Date(payments.approvedAt))}
         </li>
       </ul>
     </div>
