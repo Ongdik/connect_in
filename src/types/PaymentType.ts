@@ -9,16 +9,11 @@ export interface PaymentResponse {
   code: string; // 응답 코드
   message: string; // 응답 메시지
   result: {
-    // 결제 상세 정보
+    status: string;
     orderName: string;
     orderId: string;
+    totalAmount: number;
     approvedAt: string;
-    amount: number;
-    // card: {
-    //   company: string;
-    //   number: string;
-    //   amount: number;
-    // } | null;
   };
 }
 
