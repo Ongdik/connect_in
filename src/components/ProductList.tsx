@@ -47,31 +47,31 @@ const sampleProducts: ProductType[] = [
   {
     id: 1,
     title: "BHC 치킨",
-    imageUrl: "/images/image_test.png",
+    imageUrl: "/images/chicken.jpg",
     price: 18000,
   },
   {
     id: 2,
     title: "마라맛 엽떡",
-    imageUrl: "/images/image_test.png",
+    imageUrl: "/images/tteokbokki.jpg",
     price: 12000,
   },
   {
     id: 3,
     title: "빽보이 피자",
-    imageUrl: "/images/image_test.png",
+    imageUrl: "/images/pizza.jpg",
     price: 15000,
   },
   {
     id: 4,
     title: "장충동 왕족발",
-    imageUrl: "/images/image_test.png",
+    imageUrl: "/images/jokbal.jpg",
     price: 20000,
   },
   {
     id: 5,
     title: "김밥 브라더스",
-    imageUrl: "/images/image_test.png",
+    imageUrl: "/images/kimbap.jpg",
     price: 8000,
   },
 ];
