@@ -69,8 +69,9 @@ export default async function Page({
           </h1>
         </div>
         <p className="text-sm text-gray-600 mt-2">
-          {Intl.DateTimeFormat().format(new Date(payments.approvedAt))} 주문하신
-          상품의 주문번호는{" "}
+          {" "}
+          주문하신
+          {payments.approvedAt.split("T")[0]} 상품의 주문번호는{" "}
           <span className="text-red-500 font-semibold">{payments.orderId}</span>{" "}
           입니다.
         </p>
