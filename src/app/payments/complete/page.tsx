@@ -1,4 +1,6 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
+import CheckIcon from "@/public/svgs/order_complete_check.svg";
+import Image from "next/image";
 
 export default async function Page({
   searchParams,
@@ -56,20 +58,68 @@ export default async function Page({
   // console.log("카드 정보:", card);
 
   return (
-    <div>
-      <h1>결제가 완료되었습니다</h1>
-      <ul>
-        <li>결제 상품: {payments.orderName}</li>
-        <li>주문번호: {payments.orderId}</li>
-        <li>결제금액: {payments.totalAmount || ""}</li>
-        {/* <li>카드회사: {card?.company || "-"}</li>
-        <li>카드번호: {card?.number || ""}</li>
-        <li>결제금액: {card?.amount || ""}</li> */}
-        <li>
-          결제승인날짜:{" "}
-          {Intl.DateTimeFormat().format(new Date(payments.approvedAt))}
-        </li>
-      </ul>
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* 상단 영역 */}
+      <div className="bg-white shadow-md rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-4">
+          {/* 체크 아이콘 */}
+          <CheckIcon className="w-10 h-10 text-green-500" />
+          <h1 className="text-lg font-bold text-gray-800">
+            주문이 완료되었습니다
+          </h1>
+        </div>
+        <p className="text-sm text-gray-600 mt-2">
+          {Intl.DateTimeFormat().format(new Date(payments.approvedAt))} 주문하신
+          상품의 주문번호는{" "}
+          <span className="text-red-500 font-semibold">{payments.orderId}</span>{" "}
+          입니다.
+        </p>
+      </div>
+
+      {/* 주문 상세 정보 */}
+      <div className="bg-white shadow-md rounded-lg p-4">
+        {/* 상품 정보 */}
+        <div className="flex items-start space-x-4 mb-4">
+          {/* 제품 이미지 */}
+          <Image
+            src="/images/chicken.jpg" // 실제 이미지 경로로 교체
+            alt="chicken"
+            width={80}
+            height={80}
+            className="rounded-md"
+          />
+          {/* 제품 상세 정보 */}
+          <div>
+            <p className="text-sm font-bold text-gray-800">
+              {payments.orderName}
+            </p>
+            <p className="text-xs text-gray-600">{payments.orderName}</p>
+          </div>
+        </div>
+
+        {/* 결제 정보 */}
+        <div className="border-t border-gray-200 pt-4">
+          <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <span>주문금액</span>
+            <span>{payments.totalAmount.toLocaleString()}원</span>
+          </div>
+
+          <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <span>쿠폰할인</span>
+            <span>-0원</span>
+          </div>
+
+          <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <span>포인트사용</span>
+            <span>-0P</span>
+          </div>
+
+          <div className="flex justify-between text-sm font-bold text-gray-800">
+            <span>결제금액</span>
+            <span>{payments.totalAmount.toLocaleString()}원</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
