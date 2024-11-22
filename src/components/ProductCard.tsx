@@ -5,6 +5,8 @@ import Image from "next/image";
 import { ProductType } from "@/types/ProductType";
 import { TossError } from "@/types/TossErrorType";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
+import { useSetRecoilState } from "recoil";
+import { selectedProductIndexState } from "@/states/atoms/ProductAtom";
 
 type ProductCardProps = {
   product: ProductType;
@@ -13,6 +15,7 @@ type ProductCardProps = {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [participants, setParticipants] = useState(1); // 현재 참여 인원
   const maxParticipants = 4; // 최대 참여 인원
+  const setSelectedProductIndex = useSetRecoilState(selectedProductIndexState);
 
   const handleJoin = () => {
     if (participants < maxParticipants) {
