@@ -1,6 +1,6 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 import CheckIcon from "@/public/svgs/order_complete_check.svg";
-import Image from "next/image";
+import PaidProduct from "@/components/PaidProduct";
 
 export default async function Page({
   searchParams,
@@ -8,7 +8,6 @@ export default async function Page({
   searchParams: Promise<SearchParams>;
 }) {
   const { orderId, paymentKey, amount: amountStr } = await searchParams;
-
   const amount = Number(amountStr);
 
   // 디버깅: searchParams에 포함된 값 확인
@@ -49,16 +48,11 @@ export default async function Page({
   const paymentsResponse: PaymentResponse = await response.json();
   console.log("전체 결제 응답 데이터:", paymentsResponse);
 
-  // `result` 객체 추출 및 디버깅
   const payments = paymentsResponse.result;
   console.log("결제 결과 데이터 (result):", payments);
 
-  // // `card` 정보 추출 및 디버깅
-  // const { card } = payments;
-  // console.log("카드 정보:", card);
-
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="relative min-h-screen bg-gray-50 p-6">
       {/* 상단 영역 */}
       <div className="bg-white shadow-md rounded-lg p-4 mb-6">
         <div className="flex items-center space-x-4">
@@ -69,9 +63,7 @@ export default async function Page({
           </h1>
         </div>
         <p className="text-sm text-gray-600 mt-2">
-          {" "}
-          주문하신
-          {payments.approvedAt.split("T")[0]} 상품의 주문번호는{" "}
+          {payments.approvedAt.split("T")[0]} 주문하신 상품의 주문번호는{" "}
           <span className="text-red-500 font-semibold">{payments.orderId}</span>{" "}
           입니다.
         </p>
@@ -81,14 +73,9 @@ export default async function Page({
       <div className="bg-white shadow-md rounded-lg p-4">
         {/* 상품 정보 */}
         <div className="flex items-start space-x-4 mb-4">
-          {/* 제품 이미지 */}
-          <Image
-            src="/images/chicken.jpg" // 실제 이미지 경로로 교체
-            alt="chicken"
-            width={80}
-            height={80}
-            className="rounded-md"
-          />
+          {/* SelectedIndex 컴포넌트를 통해 이미지와 상품 정보를 표시 */}
+          <PaidProduct />
+
           {/* 제품 상세 정보 */}
           <div>
             <p className="text-sm font-bold text-gray-800">
