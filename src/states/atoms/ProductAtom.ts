@@ -1,5 +1,5 @@
 // src/state/atoms/ProductAtom.ts
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { ProductType } from "@/types/ProductType";
 
 // 더미 데이터
@@ -26,5 +26,8 @@ export const sampleProducts: ProductType[] = [
   },
 ];
 
-// 선택된 상품 인덱스 상태
-export const selectedProductIndexAtom = atom<number | null>(null);
+// 선택된 상품 인덱스를 localStorage에 저장
+export const selectedProductIndexAtom = atomWithStorage<number | null>(
+  "selectedProductIndex", // localStorage 키 이름
+  null // 초기값
+);
