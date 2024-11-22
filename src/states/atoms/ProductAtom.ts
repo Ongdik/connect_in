@@ -1,5 +1,5 @@
 // src/state/atoms/ProductAtom.ts
-import { atom } from "recoil";
+import { atom } from "jotai";
 import { ProductType } from "@/types/ProductType";
 
 // 더미 데이터
@@ -27,7 +27,4 @@ export const sampleProducts: ProductType[] = [
 ];
 
 // 선택된 상품 인덱스 상태
-export const selectedProductIndexState = atom<number | null>({
-  key: "selectedProductIndexState",
-  default: null,
-});
+export const selectedProductIndexAtom = atom<number | null>(null);
