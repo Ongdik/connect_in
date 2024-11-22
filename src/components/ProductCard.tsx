@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ProductType } from "@/types/ProductType";
 import { TossError } from "@/types/TossErrorType";
 import { loadTossPayments } from "@tosspayments/payment-sdk";
-import { useSetRecoilState } from "recoil";
-import { selectedProductIndexState } from "@/states/atoms/ProductAtom";
+import { selectedProductIndexAtom } from "@/states/atoms/ProductAtom";
+import { useAtom } from "jotai";
 
 type ProductCardProps = {
   product: ProductType;
@@ -15,7 +15,14 @@ type ProductCardProps = {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [participants, setParticipants] = useState(1); // 현재 참여 인원
   const maxParticipants = 4; // 최대 참여 인원
-  const setSelectedProductIndex = useSetRecoilState(selectedProductIndexState);
+  const [selectedProductIndex, setSelectedProductIndex] = useAtom(
+    selectedProductIndexAtom
+  );
+
+  // Jotai 상태 변경 감지
+  useEffect(() => {
+    console.log("Jotai 상태 변경됨: ", selectedProductIndex);
+  }, [selectedProductIndex]);
 
   const handleJoin = () => {
     if (participants < maxParticipants) {
@@ -36,11 +43,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const orderId = `${product.idx}_${Date.now()}`;
 
     try {
+      setSelectedProductIndex(product.idx); // Jotai 상태 업데이트
+      console.log("결제를 위해 설정된 idx:", product.idx); // 업데이트된 값을 바로 출력
+
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
         orderId,
         orderName: product.title,
-        successUrl: `${window.location.origin}/payments/complete?idx=${product.idx}`,
+        successUrl: `${window.location.origin}/payments/complete`,
         failUrl: `${window.location.origin}/payments/fail`,
       });
     } catch (error) {
