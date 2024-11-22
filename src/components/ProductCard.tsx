@@ -30,14 +30,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
     const tossPayments = await loadTossPayments(clientKey);
     const amountToPay = product.price / maxParticipants; // 나누어진 금액
-    const orderId = `${product.id}_${Date.now()}`;
+    const orderId = `${product.idx}_${Date.now()}`;
 
     try {
       await tossPayments.requestPayment("카드", {
         amount: amountToPay,
         orderId,
         orderName: product.title,
-        successUrl: `${window.location.origin}/payments/complete`,
+        successUrl: `${window.location.origin}/payments/complete?idx=${product.idx}`,
         failUrl: `${window.location.origin}/payments/fail`,
       });
     } catch (error) {
