@@ -1,6 +1,7 @@
 import { PaymentResponse, SearchParams } from "@/types/PaymentType";
 import CheckIcon from "@/public/svgs/order_complete_check.svg";
 import PaidProduct from "@/components/PaidProduct";
+import HomeButton from "@/components/HomeButton";
 
 export default async function Page({
   searchParams,
@@ -108,6 +109,7 @@ export default async function Page({
           </div>
         </div>
       </div>
+      <HomeButton/>
     </div>
   );
 }
