@@ -10,19 +10,33 @@ import { useAtom } from "jotai";
 
 type ProductCardProps = {
   product: ProductType;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, setBalance }) => {
   const [participants, setParticipants] = useState(1); // 현재 참여 인원
   const maxParticipants = 4; // 최대 참여 인원
   const [selectedProductIndex, setSelectedProductIndex] = useAtom(
     selectedProductIndexAtom
   );
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   // Jotai 상태 변경 감지
   useEffect(() => {
     console.log("Jotai 상태 변경됨: ", selectedProductIndex);
   }, [selectedProductIndex]);
+
+  const handleComplete = () => {
+    const isConfirmed = window.confirm("상품을 수령하셨습니까? 확인을 누르면 수령 완료로 처리됩니다.");
+    if (isConfirmed) {
+      setIsButtonClicked(true);
+      setIsCompleted(true);
+      setBalance((prevBalance) => prevBalance + ((product.price) / 4) * 3);
+      alert("상품 수령이 확인되었습니다.");
+      //setSelectedProductIndex(-1); // Jotai 상태 초기화 
+    }
+  };
 
   const handleJoin = () => {
     if (participants < maxParticipants) {
@@ -64,8 +78,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
+  const isPaymentCompleted = selectedProductIndex === product.idx;
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition">
+    <div
+      className={`bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition ${isCompleted ? "opacity-50 pointer-events-none" : ""
+        }`}
+    >
+
       <Image
         src={product.imageUrl}
         alt={product.title}
@@ -82,29 +102,47 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {product.price}원
         </div>
       </div>
-      <div className="mt-2">
-        <p>
-          참여 인원: {participants} / {maxParticipants}
-        </p>
-        <button
-          onClick={handleJoin}
-          className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg"
-          disabled={participants >= maxParticipants}
-        >
-          참여하기
-        </button>
-      </div>
+
+      {!isPaymentCompleted && (
+        <div className="mt-2">
+          <p>
+            참여 인원: {participants} / {maxParticipants}
+          </p>
+          <button
+            onClick={handleJoin}
+            className="mt-2 bg-green-500 text-white px-4 py-2 rounded-lg"
+            disabled={participants >= maxParticipants}
+          >
+            참여하기
+          </button>
+        </div>
+      )}
+
       <div className="mt-4">
-        <button
-          onClick={participants === maxParticipants ? handlePayment : undefined} // 참여자 결제
-          className={`mt-2 w-full ${
-            participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
-          } text-white px-4 py-2 rounded-lg`}
-          disabled={participants < maxParticipants}
-        >
-          {participants < maxParticipants ? "모집 중..." : "결제하기"}
-        </button>
+        {isPaymentCompleted ? (
+          <button
+            onClick={handleComplete}
+            className={`mt-2 w-full text-white px-4 py-2 rounded-lg ${isButtonClicked ? "bg-gray-400" : "bg-blue-500"
+              }`}
+          >
+            상품 수령
+          </button>
+        ) : (
+          <button
+            onClick={participants === maxParticipants ? handlePayment : undefined}
+            className={`mt-2 w-full ${participants < maxParticipants ? "bg-gray-400" : "bg-blue-500"
+              } text-white px-4 py-2 rounded-lg`}
+            disabled={participants < maxParticipants}
+          >
+            {participants < maxParticipants ? "모집 중..." : "결제하기"}
+          </button>
+        )}
       </div>
+      {isCompleted && (
+        <div className="text-red-600 text-sm mt-2">
+          거래 완료된 상품입니다
+        </div>
+      )}
     </div>
   );
 };
